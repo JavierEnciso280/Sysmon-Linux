@@ -154,3 +154,5 @@
 
 
   sysmon -accepteula -i /opt/config.xml
+
+  sysmon -i config.xml

@@ -1,18 +1,18 @@
-Instalación de Sysmon en RED HAT 
+Instalación de Sysmon en RED HAT 8.9
 
-Ejecutar los siguientes comandos
+1-Ejecutar los siguientes comandos
 
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo wget -q -O /etc/yum.repos.d/microsoft-prod.repo https://packages.microsoft.com/config/rhel/8/prod.repo
 
 
-Luego ejecutar el siguiente comando:
+2-Luego ejecutar el siguiente comando:
 sudo dnf install sysmonforlinux
 
 
 
 
-Copiar éste contenido
+3-Copiar el siguiente contenido:
 
 <Sysmon schemaversion="4.81">
   <EventFiltering>
@@ -168,20 +168,22 @@ Copiar éste contenido
   </EventFiltering>
 </Sysmon>
 
-Ejecutar el siguiente comando y pegar el contenido copiado
-nano /opt/config.xml
+
+
+4-Ejecutar el siguiente comando y pegar el contenido copiado
+nano /opt/sysmon.xml
 
 CTRL + O para guardar
 CTRL + X para salir
 
-Ubicarse en el directorio /opt
-cd /opt
+5-Ejecutar el siguiente comando para iniciar el servicio con la nueva configuración.
+sysmon -accepteula -i /opt/sysmon.xml
 
-Ejecutar el siguiente comando para iniciar el servicio con la nueva configuración.
-sysmon -i config.xml
+6-Verificar estado del servicio:
 
+systemctl status sysmon
 
-
+7- Los registros se almacenan en /var/log/messages
 
 
 

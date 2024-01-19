@@ -6,7 +6,7 @@ sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo wget -q -O /etc/yum.repos.d/microsoft-prod.repo https://packages.microsoft.com/config/rhel/8/prod.repo
 
 
-2-Luego ejecutar el siguiente comando:
+2-Ejecutar el siguiente comando:
 
 sudo dnf install sysmonforlinux
 
@@ -197,5 +197,5 @@ Y volver a descargarlo ejecutando el siguiente comando:
 wget https://github.com/Sysinternals/SysinternalsEBPF.git
 
 
-Volver a ejecutar el paso 5 y debería funcionar correctamente y volver a ejecutar el paso 6
+Volver a ejecutar los pasos 5 y debería funcionar correctamente y volver a ejecutar el paso 6
 ****************************************************************************************************

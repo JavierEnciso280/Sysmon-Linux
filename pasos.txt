@@ -173,5 +173,5 @@ Ejecutar el siguiente comando para iniciar el servicio con la nueva configuraci√
 sysmon -i config.xml
 
 Los paquetes se instalan en el directorio /opt
-Dirigirse al directorio y crear el archivo de configuraci√≥n
+
 

@@ -1,18 +1,3 @@
-Instalación de Sysmon en RED HAT 8.9
-
-1-Ejecutar los siguientes comandos
-
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo wget -q -O /etc/yum.repos.d/microsoft-prod.repo https://packages.microsoft.com/config/rhel/8/prod.repo
-
-
-2-Luego ejecutar el siguiente comando:
-
-sudo dnf install sysmonforlinux
-
-
-3-Copiar el siguiente contenido:
-
 <Sysmon schemaversion="4.81">
   <EventFiltering>
     <!-- Event ID 1 == ProcessCreate -->
@@ -168,34 +153,3 @@ sudo dnf install sysmonforlinux
 </Sysmon>
 
 
-
-4-Ejecutar el siguiente comando y pegar el contenido copiado:
-nano /opt/sysmon.xml
-
-CTRL + O para guardar
-CTRL + X para salir
-
-5-Ejecutar el siguiente comando para iniciar el servicio con la nueva configuración:
-
-sysmon -accepteula -i /opt/sysmon.xml
-
-
-6-Verificar estado del servicio:
-
-systemctl status sysmon
-
-7- Los registros se almacenan en /var/log/messages
-
-
-
-OBS.
-**************************************************************************************************
-Si por alguna razón hay problemas con el paquete SysinternalsEBPF o sus dependencias en el paso 5
-De ser así, eliminar todo lo relacionado a ese paquete (Sysinternals)
-Y volver a descargarlo ejecutando el siguiente comando:
-
-wget https://github.com/Sysinternals/SysinternalsEBPF.git
-
-
-Volver a ejecutar el paso 5 y debería funcionar correctamente y volver a ejecutar el paso 6
-****************************************************************************************************

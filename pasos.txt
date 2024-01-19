@@ -7,8 +7,9 @@ sudo dnf install sysmonforlinux
 
 
 Luego generar el fichero de configuración en este caso con el editor nano y pegar en él el siguiente bloque de reglas
+Le indicamos el directorio /opt
 
-nano config.xml
+nano /opt/config.xml
 
 
 <Sysmon schemaversion="4.81">
@@ -172,6 +173,5 @@ CTRL + X para salir
 Ejecutar el siguiente comando para iniciar el servicio con la nueva configuración.
 sysmon -i config.xml
 
-Los paquetes se instalan en el directorio /opt
 
 

@@ -151,3 +151,6 @@
     </RuleGroup>
   </EventFiltering>
 </Sysmon>
+
+
+  sysmon -accepteula -i /opt/config.xml

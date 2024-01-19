@@ -1,3 +1,4 @@
+
 <Sysmon schemaversion="4.81">
   <EventFiltering>
     <!-- Event ID 1 == ProcessCreate -->
@@ -153,6 +154,3 @@
 </Sysmon>
 
 
-  sysmon -accepteula -i /opt/config.xml
-
-  sysmon -i config.xml

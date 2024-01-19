@@ -23,6 +23,7 @@
         <Rule name="TechniqueID=T1053.003,TechniqueName=Scheduled Task/Job: Cron" groupRelation="or">
           <Image condition="end with">crontab</Image>
         </Rule>
+        <!--Terminal and binaries called-->
         <Rule name="TechniqueID=T1059.004,TechniqueName=Command and Scripting Interpreter: Unix Shell" groupRelation="or">
           <Image condition="end with">/bin/bash</Image>
           <Image condition="end with">/bin/dash</Image>

@@ -10,8 +10,10 @@ sudo wget -q -O /etc/yum.repos.d/microsoft-prod.repo https://packages.microsoft.
 
 sudo dnf install sysmonforlinux
 
+3- Ejecutar el siguiente comando
+nano /opt/sysmon.xml
 
-3-Copiar el siguiente contenido:
+4-Copiar el siguiente contenido:
 
 <Sysmon schemaversion="4.81">
   <EventFiltering>
@@ -167,35 +169,30 @@ sudo dnf install sysmonforlinux
   </EventFiltering>
 </Sysmon>
 
+5- CTRL + O para guardar
+6- CTRL + X para salir
 
-
-4-Ejecutar el siguiente comando y pegar el contenido copiado:
-nano /opt/sysmon.xml
-
-CTRL + O para guardar
-CTRL + X para salir
-
-5-Ejecutar el siguiente comando para iniciar el servicio con la nueva configuración:
+7- Ejecutar el siguiente comando para iniciar el servicio con la nueva configuración:
 
 sysmon -accepteula -i /opt/sysmon.xml
 
 
-6-Verificar estado del servicio:
+8- Verificar estado del servicio:
 
 systemctl status sysmon
 
-7- Los registros se almacenan en /var/log/messages
+9- Los registros se almacenan en /var/log/messages
 
 
 
 OBS.
 **************************************************************************************************
-Si por alguna razón hay problemas con el paquete SysinternalsEBPF o sus dependencias en el paso 5
+Si por alguna razón hay problemas con el paquete SysinternalsEBPF o sus dependencias en el paso 7
 De ser así, eliminar todo lo relacionado a ese paquete (Sysinternals)
 Y volver a descargarlo ejecutando el siguiente comando:
 
 wget https://github.com/Sysinternals/SysinternalsEBPF.git
 
 
-Volver a ejecutar los pasos 5 y debería funcionar correctamente y volver a ejecutar el paso 6
+Volver a ejecutar los pasos 7 y 8 respectivamente
 ****************************************************************************************************

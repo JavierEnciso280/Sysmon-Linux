@@ -1,16 +1,18 @@
-Para RED HAT 8 ejecutar los siguientes comandos
+Instalación de Sysmon en RED HAT 
+
+Ejecutar los siguientes comandos
 
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo wget -q -O /etc/yum.repos.d/microsoft-prod.repo https://packages.microsoft.com/config/rhel/8/prod.repo
 
+
+Luego ejecutar el siguiente comando:
 sudo dnf install sysmonforlinux
 
 
-Luego generar el fichero de configuración en este caso con el editor nano y pegar en él el siguiente bloque de reglas
-Le indicamos el directorio /opt
 
-nano /opt/config.xml
 
+Copiar éste contenido
 
 <Sysmon schemaversion="4.81">
   <EventFiltering>
@@ -166,12 +168,20 @@ nano /opt/config.xml
   </EventFiltering>
 </Sysmon>
 
+Ejecutar el siguiente comando y pegar el contenido copiado
+nano /opt/config.xml
 
 CTRL + O para guardar
 CTRL + X para salir
 
+Ubicarse en el directorio /opt
+cd /opt
+
 Ejecutar el siguiente comando para iniciar el servicio con la nueva configuración.
 sysmon -i config.xml
+
+
+
 
 
 

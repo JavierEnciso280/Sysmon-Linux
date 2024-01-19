@@ -6,11 +6,9 @@ sudo wget -q -O /etc/yum.repos.d/microsoft-prod.repo https://packages.microsoft.
 sudo dnf install sysmonforlinux
 
 
-Los paquetes se instalan en el directorio /opt
-Dirigirse al directorio y crear el archivo de configuración
+Luego generar el fichero de configuración en este caso con el editor nano y pegar en él el siguiente bloque de reglas
 
-cd /opt
-nano config.xml y pegar en él éste contenido
+nano config.xml
 
 
 <Sysmon schemaversion="4.81">
@@ -173,3 +171,7 @@ CTRL + X para salir
 
 Ejecutar el siguiente comando para iniciar el servicio con la nueva configuración.
 sysmon -i config.xml
+
+Los paquetes se instalan en el directorio /opt
+Dirigirse al directorio y crear el archivo de configuración
+

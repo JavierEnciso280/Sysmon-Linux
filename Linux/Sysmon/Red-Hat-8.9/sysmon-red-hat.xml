@@ -28,7 +28,6 @@
           <Image condition="end with">/bin/bash</Image>
           <Image condition="end with">/bin/dash</Image>
           <Image condition="end with">/bin/sh</Image>
-          <Image condition="begin with">/usr/bin/</Image>
         </Rule>
         <Rule name="TechniqueID=T1070.006,TechniqueName=Indicator Removal on Host: Timestomp" groupRelation="and">
           <Image condition="is">/bin/touch</Image>

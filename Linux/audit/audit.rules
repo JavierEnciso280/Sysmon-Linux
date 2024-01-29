@@ -1,0 +1,204 @@
+## First rule - delete all
+
+-D
+
+
+
+## Increase the buffers to survive stress events.
+
+## Make this bigger for busy systems
+
+-b 8192
+
+#-b 16384
+
+
+
+## This determine how long to wait in burst of events
+
+--backlog_wait_time 60000
+
+
+
+## Set failure mode to syslog
+
+
+
+-f 1
+
+
+
+
+
+#en sistemas donde se tenga sysmon es recomendable desactivar esta regla. Sysmon ya detecta en Creacion de procesos todos los comandos ejecutados.
+
+#exclude ausearch
+
+#esta regla lo que hace es excluir los comandos ausearch, y la siguiente regla detecta todos los demas comandos root
+
+#-a never,exit -S all -F dir=/usr/sbin/ausearch -F key=audit-root
+
+#-a always,exit -F arch=b64 -S execve -F euid=0 -k audit-root
+
+
+
+#ejemplo detectar todos los comandos menos ausearch
+
+#Sintaxis de las reglas:  -a action,filter -S system_call -F field=value -k key_name
+
+#
+
+# -a never,exit -S all -F dir=/usr/sbin/ausearch -F key=sbin_monitor
+
+# -w /usr/sbin -p x -k sbin_monitor
+
+#
+
+#    action y filter: Cuando debe ser registrado un evento (always / never) y filtros: task, exit, user y exclude.
+
+#    systemcall: Nombre de la/s llamadas al sistema, pueden escribirse varias consecutivamente.
+
+#    field=value Especifica campos como identificadores de usuario, procesos y demás.
+
+#    key_name: La llave es para organizar por grupos las reglas, es opcional.
+
+#exluir todos los procesos que no tienen un id de usuario (procesos del sistema) auid=unset
+
+#-a never,exit -F arch=x86_64 -S all -F auid=unset
+
+
+
+
+
+
+
+#detectar todos los comandos root, esta regla se utiliza para generar eventos con comandos criticos como useradd, deluser,usermode -aG sudo, etc
+
+#y tambien puede utilizarse para hacer reglas que hagan match con determinadas combinaciones, ej.: nano /etc/passwd  
+
+-a always,exit -F arch=x86_64 -S execve -F euid=0 -k audit-root
+
+
+
+#Regla para monitorear todos los comandos de un usuario normal, genera mucho ruido
+
+#-a always,exit -F arch=b64 -S execve -F auid>=1000 -k audit-user
+
+
+
+#sin esta regla no se detecta si un usuario normal lee el fichero sshd_config
+
+-a always,exit -F uid!=0 -F path=/etc/ssh/sshd_config -k ssh-user
+
+#si root realiza lecturas a passwd
+
+
+
+#monitorear el fichero sshd_config mediante read-write
+
+#si se cambia un valor del fichero sshd_config se genera un evento con la llave audit-ssh-w  (write)
+
+#si se lee o se intenta editar pero sin exito, se genera un evento con la llave audit-ssh-r (read)
+
+#En resumen estas reglas detectan todo tipo de acceso al fichero sshd_config
+
+-w /etc/ssh/sshd_config -p r -k audit-ssh-r
+
+-w /etc/ssh/sshd_config -p w -k audit-ssh-w
+
+#monitorear especificamente el fichero, se pueden agregar cosas raras en el, copiar, mover, borrar.
+
+-w /etc/ssh -p r -k audit-ssh-r
+
+-w /etc/ssh -p w -k audit-ssh-w
+
+-w /etc/ssh -p a -k audit-ssh-a
+
+
+
+#para monitorear de forma muy puntual las lecturas del fichero etc/shadow tambien se utiliza la sigte estrategia
+
+#para los comandos posibles contra el fichero, se utiliza el audit-root por un lado
+
+#para las escrituras se utiliza la regla audit-shadow-w
+
+-w /etc/shadow -p w -k audit-shadow-w
+
+
+
+#auditar solo las escrituras a sudoers con esta regla, auditar comandos ejecutados con audit-root
+
+-w /etc/sudoers -p w -k audit-sudo-w
+
+-w /etc/sudoers -p a -k audit-sudo-a
+
+
+
+-w /etc/sudoers.d -p a -k audit-sudo-a
+
+-w /etc/sudoers.d -p w -k audit-sudo-w
+
+-w /etc/sudoers.d -p r -k audit-sudo-r
+
+#auditar cron, tener en cuenta que el comando crontab -e ya lo detecta wazuh, pero solo eso
+
+#si se modifica de otra manera el contenido del fichero solo se detecta mediante las siguientes reglas
+
+-w /var/spool/cron -p w -k audit-cron-w
+
+-w /var/spool/cron -p r -k audit-cron-r
+
+-w /var/spool/cron -p a -k audit-cron-a
+
+-w /var/spool/cron -p x -k audit-cron-x
+
+
+
+#detecta cuando se inicia un terminal en linux
+
+-w /etc/bash.bashrc -k audit-bashrc
+
+
+
+#rc.local, detectar todo tipo de accesos, lectura, escritura, ejecucion
+
+-w /etc/rc.local -p r -k audit-rc-r
+
+-w /etc/rc.local -p w -k audit-rc-w
+
+-w /etc/rc.local -p x -k audit-rc-x
+
+
+
+#detectar servicios 
+
+## System startup scripts, seguir probando estas reglas
+
+-w /etc/inittab -p w -k inittab-w
+
+-w /etc/inittab -p a -k inittab-a
+
+
+
+
+
+#Cuando se recibe una conexion sshfs, el bash del server recibe un argumento para iniciar el servidor sftp
+
+#el argumento es el siguiente:  /usr/lib/openssh/sftp-server
+
+#el tipo de llamada al sistema que detecta este proceso es x (execute)
+
+-w /usr/lib/openssh/sftp-server -p x -k audit-sftp-x
+
+
+
+#detectar escritura en passwd
+
+-w /etc/passwd -p w -k audit-passwd-w
+
+
+
+#lectura de etc/passwd de usuario comun
+
+-a always,exit -F arch=x86_64 -F auid!=unset -F euid>=1000 -F path=/etc/passwd -k passwd-user-r
+

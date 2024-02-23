@@ -1,0 +1,207 @@
+<!-- Modify it at your will. -->
+<group name="linux,sysmon,">
+    <rule id="200150" level="0">
+        <decoded_as>sysmon-linux</decoded_as>
+        <field name="system.eventId">\.+</field>
+        <group>sysmon_event1</group>
+        <description>Sysmon For Linux Event</description>
+        <mitre>
+         <id>T1204</id>
+        </mitre>
+        <options>no_full_log</options>
+    </rule>
+<!--EventID = 1-->
+    <rule id="200151" level="3">
+        <if_sid>200150</if_sid>
+        <field name="system.eventId">^1$</field>
+        <field name="eventdata.currentDirectory" type="pcre2" negate="yes">^/var/ossec$</field>
+        <description>Sysmon - Event 1: Creación de proceso $(eventdata.image)</description>
+        <group>sysmon_event1</group>
+        <mitre>
+         <id>T1204</id>
+        </mitre>
+        <options>no_full_log</options>
+    </rule>
+<!--EventID = 3-->
+    <rule id="200152" level="3">
+        <if_sid>200150</if_sid>
+        <field name="system.eventId">^3$</field>
+        <description>Sysmon - Event 3: Network connection by $(eventdata.image)</description>
+        <group>sysmon_event3</group>
+        <mitre>
+         <id>T1043</id>
+        </mitre>
+        <options>no_full_log</options>
+    </rule>
+<!--EventID = 5-->
+<!--
+    <rule id="200153" level="3">
+        <if_sid>200150</if_sid>
+        <field name="system.eventId">^5$</field>
+        <description>Sysmon - Event 5: Proceso terminado $(eventdata.image)</description>
+        <group>sysmon_event5</group>
+        <mitre>
+         <id>T1204</id>
+        </mitre>
+        <options>no_full_log</options>
+    </rule>
+    -->
+<!--EventID = 9-->
+<!--
+    <rule id="200154" level="3">
+        <if_sid>200150</if_sid>
+        <field name="system.eventId">^9$</field>
+        <description>Sysmon - Event 9: Acceso sin procesar leído por $(eventdata.image)</description>
+        <group>sysmon_event9</group>
+        <mitre>
+         <id>T1204</id>
+        </mitre>
+        <options>no_full_log</options>
+    </rule>
+    -->
+<!--EventID = 11-->
+    <rule id="200155" level="3">
+        <if_sid>200150</if_sid>
+        <field name="system.eventId">^11$</field>
+        <description>Sysmon - Event 11: Archivo creado por $(eventdata.image)</description>
+	      <group>sysmon_event_11</group>
+        <mitre>
+         <id>T1044</id>
+        </mitre>
+        <options>no_full_log</options>
+    </rule>
+<!--EventID = 16-->
+    <rule id="200156" level="3">
+        <if_sid>200150</if_sid>
+        <field name="system.eventId">^16$</field>
+        <description>Sysmon - Event 16: El estado de configuración de Sysmon cambió $(Event.EventData.Data.Configuration)</description>
+        <group>sysmon_event_16</group>
+        <mitre>
+         <id>T1562</id>
+        </mitre>
+        <options>no_full_log</options>
+    </rule>
+<!--EventID = 23-->
+    <rule id="200157" level="3">
+        <if_sid>200150</if_sid>
+        <field name="system.eventId">^23$</field>
+        <description>Sysmon - Event 23: Archivo borrado (A file delete was detected) por $(eventdata.image)</description>
+        <group>sysmon_event_23</group>
+        <mitre>
+         <id>T1107</id>
+         <id>T1485</id>
+        </mitre>
+        <options>no_full_log</options>
+    </rule>
+
+<!--*******************************************************************  SEGUNDO BLOQUE *****************************************************************************-->
+<!--INICIA AQUI EL SEGUNDO BLOQUE DE REGLAS BASADAS EN LA PRIMERA PARTE (DESDE EL ID 200150 HASTA 200157), EN EL SEGUNDO BLOQUE SE IRÁN SUBCATEGORIZANDO ALGUNOS EVENTOS COMO TAMBIÉN LA EXLUSIÓN 
+SI CON EL TIEMPO SE VAN AGREGANDO CAPACIDADES DE DETECCIÓN EXTRAS PARA SYSMON EN LINUX, AGREGARLAS ARRIBA EN EL PRIMER BLOQUE-->
+<!--PARA CADA ID DE REGLA DE SYSMON SE VAN A RESERVAR 199 ID´s POR CUESTIONES DE MODULARIDAD.-->
+
+    <!--**************************************************************** EVENT ID 1-RULE ID 200151 = Creación de procesos ************************************************************************-->
+    
+    <!--<rule id="200100" rule="3">-->
+    <!--    <if_sid>200151</if_sid>-->
+    <!--    <field name=""></field>-->
+    <!--    <description></description>-->
+    <!--</rule>-->
+    
+    
+    <!--**************************************************************** Fin EVENT ID 1 = Creación de procesos ***********************************************************************************-->
+    
+    
+        
+    <!--RESERVADO PARA EVENTO 2, 200300 A 200499-->
+    <!--<rule id="200300" rule="3">-->
+    <!--    <if_sid>200151</if_sid>-->
+    <!--    <field name=""></field>-->
+    <!--    <description></description>-->
+    <!--</rule>-->
+    <!--RESERVADO PARA EVENTO 2-->
+    
+    <!--**************************************************************** EVENT ID 3-RULE ID 200152 = Network connection ************************************************************************-->
+    <!--Descartar si la imagen es = /var/ossec/bin/wazuh-agentd or Image = /usr/sbin/zabbix_agentd-->
+    <rule id="200500" level="1">
+        <if_sid>200152</if_sid>
+        <field name="eventdata.image">wazuh-agentd$</field>
+        <description>Sysmon - Event 3: Network connection by $(eventdata.image)</description>
+        <group>sysmon_event3</group>
+        <mitre>
+         <id>T1107</id>
+         <id>T1485</id>
+        </mitre>
+        <options>no_full_log</options>
+    </rule>
+    
+    <!--no es lo mismo un inicio de sesion por ssh que un evento de network connection-->
+   <rule id="200501" level="10">
+        <if_sid>200152</if_sid>
+        <field name="eventdata.image">^/usr/sbin/sshd$</field>
+        <description>Actividad de red desde $(eventdata.sourceIp) al puerto $(eventdata.destinationPort)</description>
+    </rule>
+    
+  apartado, nmap
+  La regla que detecta este comportamiento es la de creación de proceso a través de la llamada al binario /usr/sbin/sshd
+  comando ejecutado apuntando al equipo que genera estos eventos: nmap -sV -sC -O -v ip
+  10 conexiones en 2 segundos, este proceso genera aproximadamente 
+  <rule id="200502" level="14" frequency="20" timeframe="10">
+    <if_matched_sid>200204</if_matched_sid>
+    <same_field>eventdata.sourceIp</same_field>
+    <description>Posible escaneo de puertos. IP de origen: $(eventdata.sourceIp)</description>
+  </rule>
+    
+    <!--****************************************************************** EVENT ID 11-RULE ID 20155 = ARCHIVO CREADO ***************************************************************************-->
+    
+    <!-- Descartar si la imagen es = /var/ossec/bin/wazuh-agentd-->
+    <rule id="200700" level="1">
+        <if_sid>200155</if_sid>
+        <field name="eventdata.image">wazuh-agentd$</field>
+        <description>Sysmon - Event 11: Archivo creado por $(eventdata.image)</description>
+        <group>sysmon_event_11</group>
+        <mitre>
+         <id>T1107</id>
+         <id>T1485</id>
+        </mitre>
+        <options>no_full_log</options>
+    </rule>
+    
+    <!--******************************************************************** EVENT ID 16-RULE ID 200156 = ESTADO DE CONFIGURACIÓN CAMBIÓ *************************************************************-->
+    
+    <!--EventID = 16-->
+    <rule id="200900" level="3">
+        <if_sid>200156</if_sid>
+        <field name="system.eventId">^16$</field>
+        <description>Sysmon - Event 16: El estado de configuración de Sysmon cambió $(Event.EventData.Data.Configuration)</description>
+        <group>sysmon_event_16</group>
+        <mitre>
+         <id>T1562</id>
+        </mitre>
+        <options>no_full_log</options>
+    </rule>
+    
+    <!--******************************************************************** FIN EVENT ID 16 = ESTADO DE CONFIGURACIÓN CAMBIÓ **************************************************************-->
+    
+    
+    
+    <!--******************************************************************** EVENT ID 23-RULE-ID 200157 = ARCHIVO FUE BORRADO  **************************************************************-->
+<!--EventID = 23. Descartar los eventos si la imagen es = /var/ossec/bin/wazuh-agentd-->
+    <rule id="201000" level="1">
+        <if_sid>200157</if_sid>
+        <field name="eventdata.image">wazuh-agentd$</field>
+        <description>Sysmon - Event 23: Archivo borrado (A file delete was detected) por $(eventdata.image)</description>
+        <group>sysmon_event_23</group>
+        <mitre>
+         <id>T1107</id>
+         <id>T1485</id>
+        </mitre>
+        <options>no_full_log</options>
+    </rule>
+    
+   
+  
+  
+ 
+
+
+</group>

@@ -27,13 +27,6 @@
 -f 1
 
 
-
-
-
-#en sistemas donde se tenga sysmon es recomendable desactivar esta regla. Sysmon ya detecta en Creacion de procesos todos los comandos ejecutados.
-
-#exclude ausearch
-
 #esta regla lo que hace es excluir los comandos ausearch, y la siguiente regla detecta todos los demas comandos root
 
 #-a never,exit -S all -F dir=/usr/sbin/ausearch -F key=audit-root
@@ -47,9 +40,10 @@
 #Sintaxis de las reglas:  -a action,filter -S system_call -F field=value -k key_name
 
 #
-
+#Esta regla excluye al binario ausearch 
 # -a never,exit -S all -F dir=/usr/sbin/ausearch -F key=sbin_monitor
 
+#Esta regla detecta todos los binarios llamados en /usr/sbin
 # -w /usr/sbin -p x -k sbin_monitor
 
 #
@@ -90,9 +84,6 @@
 
 -a always,exit -F uid!=0 -F path=/etc/ssh/sshd_config -k ssh-user
 
-#si root realiza lecturas a passwd
-
-
 
 #monitorear el fichero sshd_config mediante read-write
 
@@ -118,7 +109,7 @@
 
 #para monitorear de forma muy puntual las lecturas del fichero etc/shadow tambien se utiliza la sigte estrategia
 
-#para los comandos posibles contra el fichero, se utiliza el audit-root por un lado
+#para los comandos posibles contra el fichero, se utiliza la regla audit-root y se hacen reglas especificas en wazuh para las coincidencias
 
 #para las escrituras se utiliza la regla audit-shadow-w
 
@@ -126,19 +117,14 @@
 
 
 
-#auditar solo las escrituras a sudoers con esta regla, auditar comandos ejecutados con audit-root
+#auditar solo las escrituras a sudoers con esta regla, auditar comandos ejecutados tambien con con audit-root
 
 -w /etc/sudoers -p w -k audit-sudo-w
 
--w /etc/sudoers -p a -k audit-sudo-a
 
-
-
--w /etc/sudoers.d -p a -k audit-sudo-a
+#Autitar solo escrituras de sudoers, lecturas o comandos ejecutados con audit-root
 
 -w /etc/sudoers.d -p w -k audit-sudo-w
-
--w /etc/sudoers.d -p r -k audit-sudo-r
 
 #auditar cron, tener en cuenta que el comando crontab -e ya lo detecta wazuh, pero solo eso
 
@@ -154,9 +140,9 @@
 
 
 
-#detecta cuando se inicia un terminal en linux
+#detecta cuando se inicia un terminal en linux, no es relevante
 
--w /etc/bash.bashrc -k audit-bashrc
+#-w /etc/bash.bashrc -k audit-bashrc
 
 
 
@@ -202,3 +188,8 @@
 
 -a always,exit -F arch=x86_64 -F auid!=unset -F euid>=1000 -F path=/etc/passwd -k passwd-user-r
 
+
+
+
+
+config de Arnold
